@@ -1,4 +1,4 @@
-# github.com/TheEntropyCollective/randomfs-core v0.1.0
+# github.com/TheEntropyCollective/randomfs-core v0.1.1-0.20250701112611-74553b3ae9ce
 ## explicit; go 1.21
 github.com/TheEntropyCollective/randomfs-core
 # github.com/gorilla/mux v1.8.1
