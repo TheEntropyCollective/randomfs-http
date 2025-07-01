@@ -144,8 +144,8 @@ func main() {
 	log.Printf("Web Dir: %s", *webDir)
 	log.Printf("HTTP Port: %d", *httpPort)
 
-	// Create RandomFS instance
-	rfs, err := randomfs.NewRandomFS(*ipfsAPI, *dataDir, *cacheSize)
+	// Create RandomFS instance (without IPFS for testing)
+	rfs, err := randomfs.NewRandomFSWithoutIPFS(*dataDir, *cacheSize)
 	if err != nil {
 		log.Fatalf("Failed to initialize RandomFS: %v", err)
 	}
