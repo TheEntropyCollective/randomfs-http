@@ -1,4 +1,2 @@
-github.com/TheEntropyCollective/randomfs-core v0.1.0 h1:q7EFhfzSU1kLuUTRMtruOf0BKkmMCt1V+taQxbj6t/A=
-github.com/TheEntropyCollective/randomfs-core v0.1.0/go.mod h1:f4/IwnoXARJtr6SNiEFS/ceoAbB3C0WnCsAOO+C61hs=
 github.com/gorilla/mux v1.8.1 h1:TuBL49tXwgrFYWhqrNgrUNEY92u81SPhu7sTdzQEiWY=
 github.com/gorilla/mux v1.8.1/go.mod h1:AKf9I4AEqPTmMytcMc0KkNouC66V3BtZ4qD5fmWSiMQ=
