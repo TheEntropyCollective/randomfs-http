@@ -87,16 +87,6 @@ type RandomURL struct {
 
 // NewRandomFS creates a new RandomFS instance
 func NewRandomFS(ipfsAPI string, dataDir string, cacheSize int64) (*RandomFS, error) {
-	return NewRandomFSWithOptions(ipfsAPI, dataDir, cacheSize, false)
-}
-
-// NewRandomFSWithoutIPFS creates a new RandomFS instance without requiring IPFS
-func NewRandomFSWithoutIPFS(dataDir string, cacheSize int64) (*RandomFS, error) {
-	return NewRandomFSWithOptions("", dataDir, cacheSize, true)
-}
-
-// NewRandomFSWithOptions creates a new RandomFS instance with options
-func NewRandomFSWithOptions(ipfsAPI string, dataDir string, cacheSize int64, skipIPFSTest bool) (*RandomFS, error) {
 	if ipfsAPI == "" {
 		ipfsAPI = DefaultIPFSEndpoint
 	}
@@ -114,15 +104,12 @@ func NewRandomFSWithOptions(ipfsAPI string, dataDir string, cacheSize int64, ski
 		},
 	}
 
-	// Test IPFS connection unless skipped
-	if !skipIPFSTest {
-		if err := rfs.testIPFSConnection(); err != nil {
-			return nil, fmt.Errorf("failed to connect to IPFS: %v", err)
-		}
-		log.Printf("RandomFS initialized with IPFS at %s, data dir %s", ipfsAPI, dataDir)
-	} else {
-		log.Printf("RandomFS initialized without IPFS, data dir %s", dataDir)
+	// Test IPFS connection
+	if err := rfs.testIPFSConnection(); err != nil {
+		return nil, fmt.Errorf("failed to connect to IPFS: %v", err)
 	}
+
+	log.Printf("RandomFS initialized with IPFS at %s, data dir %s", ipfsAPI, dataDir)
 
 	return rfs, nil
 }
@@ -158,7 +145,7 @@ func (rfs *RandomFS) StoreFile(filename string, data []byte, contentType string)
 	blockSize := rfs.selectBlockSize(int64(len(data)))
 
 	// Generate randomized blocks
-	blocks, err := GenerateRandomBlocks(data, blockSize)
+	blocks, err := rfs.generateRandomBlocks(data, blockSize)
 	if err != nil {
 		return nil, fmt.Errorf("failed to generate blocks: %v", err)
 	}
@@ -241,12 +228,12 @@ func (rfs *RandomFS) RetrieveFile(repHash string) ([]byte, *FileRepresentation, 
 		// Apply XOR to de-randomize
 		if i < len(rep.BlockHashes)-1 {
 			// Full block
-			deRandomized := DeRandomizeBlock(blockData, rep.BlockSize)
+			deRandomized := rfs.deRandomizeBlock(blockData, rep.BlockSize)
 			reconstructed.Write(deRandomized)
 		} else {
 			// Last block might be partial
 			remaining := rep.FileSize - int64(reconstructed.Len())
-			deRandomized := DeRandomizeBlock(blockData, int(remaining))
+			deRandomized := rfs.deRandomizeBlock(blockData, int(remaining))
 			reconstructed.Write(deRandomized)
 		}
 	}
@@ -257,8 +244,8 @@ func (rfs *RandomFS) RetrieveFile(repHash string) ([]byte, *FileRepresentation, 
 	return reconstructed.Bytes(), &rep, nil
 }
 
-// GenerateRandomBlocks creates randomized blocks from file data using XOR with random bytes.
-func GenerateRandomBlocks(data []byte, blockSize int) ([][]byte, error) {
+// generateRandomBlocks creates randomized blocks from file data
+func (rfs *RandomFS) generateRandomBlocks(data []byte, blockSize int) ([][]byte, error) {
 	var blocks [][]byte
 
 	for offset := 0; offset < len(data); offset += blockSize {
@@ -276,7 +263,9 @@ func GenerateRandomBlocks(data []byte, blockSize int) ([][]byte, error) {
 		}
 
 		// XOR with actual data to create multi-use block
-		XORBlocksInPlace(randomBlock, chunk)
+		for i := 0; i < len(chunk); i++ {
+			randomBlock[i] ^= chunk[i]
+		}
 
 		blocks = append(blocks, randomBlock)
 	}
@@ -284,31 +273,13 @@ func GenerateRandomBlocks(data []byte, blockSize int) ([][]byte, error) {
 	return blocks, nil
 }
 
-// DeRandomizeBlock recovers original data from a randomized block (XOR with zeros is identity)
-func DeRandomizeBlock(block []byte, dataSize int) []byte {
+// deRandomizeBlock recovers original data from a randomized block
+func (rfs *RandomFS) deRandomizeBlock(block []byte, dataSize int) []byte {
+	// For this implementation, we're using a simple XOR approach
+	// In a real system, this would involve more complex cryptographic operations
 	result := make([]byte, dataSize)
 	copy(result, block[:dataSize])
 	return result
-}
-
-// XORBlocks returns the XOR of two byte slices (up to the length of the shorter slice)
-func XORBlocks(a, b []byte) []byte {
-	minLen := len(a)
-	if len(b) < minLen {
-		minLen = len(b)
-	}
-	out := make([]byte, minLen)
-	for i := 0; i < minLen; i++ {
-		out[i] = a[i] ^ b[i]
-	}
-	return out
-}
-
-// XORBlocksInPlace XORs b into a in place (up to the length of b)
-func XORBlocksInPlace(a, b []byte) {
-	for i := 0; i < len(b) && i < len(a); i++ {
-		a[i] ^= b[i]
-	}
 }
 
 // storeBlock stores a block in IPFS and local cache
