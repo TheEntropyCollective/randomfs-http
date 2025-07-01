@@ -32,18 +32,38 @@ Download the latest release for your platform from the [releases page](https://g
 ## Quick Start
 
 ```bash
-# Start server with default settings
+# Start server with default settings (requires IPFS)
 ./randomfs-http
 
 # Start on custom port
 ./randomfs-http -port 9000
+
+# Start without IPFS (for testing)
+./randomfs-http -no-ipfs
 
 # Start with custom IPFS endpoint
 ./randomfs-http -ipfs http://192.168.1.100:5001
 
 # Start with custom web interface directory
 ./randomfs-http -web ./custom-web
+
+# Start without IPFS on custom port
+./randomfs-http -port 8081 -no-ipfs
 ```
+
+## IPFS-Free Mode
+
+For testing and development, you can run the server without IPFS using the `-no-ipfs` flag:
+
+```bash
+./randomfs-http -no-ipfs
+```
+
+This mode:
+- Skips IPFS connection validation
+- Uses local storage only
+- Perfect for development and testing
+- Allows testing the web interface without IPFS setup
 
 ## Configuration
 
@@ -53,6 +73,7 @@ Download the latest release for your platform from the [releases page](https://g
 - `-data`: Data directory (default: ./data)
 - `-cache`: Cache size in bytes (default: 500MB)
 - `-web`: Web interface directory (default: ./web)
+- `-no-ipfs`: Disable IPFS (for testing without IPFS daemon)
 
 ### Environment Variables
 - `RANDOMFS_PORT`: HTTP server port
