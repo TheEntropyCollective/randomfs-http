@@ -20,6 +20,7 @@ var (
 	dataDir   = flag.String("data", "./data", "Data directory")
 	cacheSize = flag.Int64("cache", 500*1024*1024, "Cache size in bytes")
 	webDir    = flag.String("web", "./web", "Web interface directory")
+	noIPFS    = flag.Bool("no-ipfs", false, "Disable IPFS (for testing without IPFS)")
 )
 
 type Server struct {
@@ -143,9 +144,22 @@ func main() {
 	log.Printf("Cache Size: %d bytes", *cacheSize)
 	log.Printf("Web Dir: %s", *webDir)
 	log.Printf("HTTP Port: %d", *httpPort)
+	log.Printf("IPFS Disabled: %v", *noIPFS)
 
-	// Create RandomFS instance (without IPFS for testing)
-	rfs, err := randomfs.NewRandomFSWithoutIPFS(*dataDir, *cacheSize)
+	// Create RandomFS instance
+	var rfs *randomfs.RandomFS
+	var err error
+
+	if *noIPFS {
+		// Use IPFS-free mode for testing
+		rfs, err = randomfs.NewRandomFSWithoutIPFS(*dataDir, *cacheSize)
+		log.Printf("RandomFS initialized without IPFS, data dir %s", *dataDir)
+	} else {
+		// Use normal mode with IPFS
+		rfs, err = randomfs.NewRandomFS(*ipfsAPI, *dataDir, *cacheSize)
+		log.Printf("RandomFS initialized with IPFS at %s, data dir %s", *ipfsAPI, *dataDir)
+	}
+
 	if err != nil {
 		log.Fatalf("Failed to initialize RandomFS: %v", err)
 	}
