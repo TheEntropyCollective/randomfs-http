@@ -3,7 +3,7 @@ module github.com/TheEntropyCollective/randomfs-http
 go 1.21
 
 require (
-	github.com/TheEntropyCollective/randomfs-core v0.1.4
+	github.com/TheEntropyCollective/randomfs-core v0.1.5
 	github.com/gorilla/mux v1.8.1
 )
 
