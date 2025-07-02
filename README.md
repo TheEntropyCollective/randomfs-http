@@ -103,7 +103,7 @@ Store a file in RandomFS.
 ```json
 {
   "success": true,
-  "rfs_url": "rfs://QmX...abc/text/plain/example.txt",
+  "rfs_url": "rfs://QmX...abc",
   "filename": "example.txt",
   "content_type": "text/plain",
   "size": 1024
@@ -210,7 +210,7 @@ curl http://localhost:8080/api/v1/retrieve/QmX...abc
 curl http://localhost:8080/api/v1/stats
 
 # Parse a rfs:// URL
-curl http://localhost:8080/api/v1/parse/rfs://QmX...abc/text/plain/example.txt
+curl http://localhost:8080/api/v1/parse/rfs://QmX...abc
 ```
 
 ### Using JavaScript
