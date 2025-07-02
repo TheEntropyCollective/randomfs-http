@@ -7,4 +7,4 @@ require (
 	github.com/gorilla/mux v1.8.1
 )
 
-replace github.com/TheEntropyCollective/randomfs-core => ../randomfs-core/pkg/randomfs
+replace github.com/TheEntropyCollective/randomfs-core => ../randomfs-core
