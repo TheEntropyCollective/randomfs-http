@@ -13,7 +13,7 @@ RandomFS HTTP Server is a production-ready HTTP server that exposes RandomFS fun
 - **CORS Support**: Cross-origin resource sharing enabled
 - **Health Endpoints**: System health and status monitoring
 - **File Upload/Download**: Drag-and-drop file operations
-- **rd:// URL Generation**: Automatic URL creation for file sharing
+- **rfs:// URL Generation**: Automatic URL creation for file sharing
 - **Statistics API**: Real-time system metrics
 - **Configurable**: Customizable ports, directories, and cache settings
 
@@ -103,7 +103,7 @@ Store a file in RandomFS.
 ```json
 {
   "success": true,
-  "rd_url": "rd://QmX...abc/text/plain/example.txt",
+  "rfs_url": "rfs://QmX...abc/text/plain/example.txt",
   "filename": "example.txt",
   "content_type": "text/plain",
   "size": 1024
@@ -163,7 +163,7 @@ Health check endpoint.
 ```
 
 #### GET /parse/{rd_url}
-Parse a rd:// URL and return its components.
+Parse a rfs:// URL and return its components.
 
 **Request:**
 - Method: `GET`
@@ -189,9 +189,9 @@ http://localhost:8080
 
 ### Features
 - **Drag & Drop Upload**: Simply drag files to upload
-- **File Management**: View stored files and their rd:// URLs
+- **File Management**: View stored files and their rfs:// URLs
 - **Download Links**: Direct download links for files
-- **URL Sharing**: Copy rd:// URLs for sharing
+- **URL Sharing**: Copy rfs:// URLs for sharing
 - **Real-time Stats**: Live system statistics
 - **Responsive Design**: Works on desktop and mobile
 
@@ -209,8 +209,8 @@ curl http://localhost:8080/api/v1/retrieve/QmX...abc
 # Get statistics
 curl http://localhost:8080/api/v1/stats
 
-# Parse a rd:// URL
-curl http://localhost:8080/api/v1/parse/rd://QmX...abc/text/plain/example.txt
+# Parse a rfs:// URL
+curl http://localhost:8080/api/v1/parse/rfs://QmX...abc/text/plain/example.txt
 ```
 
 ### Using JavaScript
